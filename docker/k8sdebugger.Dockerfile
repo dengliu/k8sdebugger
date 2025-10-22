@@ -68,6 +68,20 @@ RUN apt-get update && \
     pigz \
     inotify-tools \
     rclone \
-    gdb
+    gdb \
+    wget
+
+# Install Go 1.23 (newer version required for grpcurl dependencies)
+# Use TARGETARCH to download the correct architecture
+ARG TARGETARCH
+RUN GOARCH=${TARGETARCH} && \
+    wget -q https://go.dev/dl/go1.23.4.linux-${GOARCH}.tar.gz && \
+    tar -C /usr/local -xzf go1.23.4.linux-${GOARCH}.tar.gz && \
+    rm go1.23.4.linux-${GOARCH}.tar.gz
+
+ENV GOPATH=/root/go
+ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+RUN go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 
 ENTRYPOINT ["sleep", "infinity"]
