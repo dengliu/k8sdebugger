@@ -100,4 +100,9 @@ COPY --from=go-tools /go/bin/nsc      /usr/local/bin/nsc
 COPY --from=go-tools /go/bin/nk       /usr/local/bin/nk
 COPY --from=go-tools /go/bin/nats-top /usr/local/bin/nats-top
 
-ENTRYPOINT ["sleep", "infinity"]
+# Keep the container alive by default so it can be `kubectl exec`'d into.
+# Using CMD (not ENTRYPOINT) so it's trivially overridable:
+#   docker run --rm -it k8sdebugger bash
+#   kubectl run dbg --image=k8sdebugger -it -- bash
+# or via a pod-spec `command:`/`args:`.
+CMD ["sleep", "infinity"]
