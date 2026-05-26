@@ -9,7 +9,8 @@ RUN go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest && \
     go install github.com/nats-io/natscli/nats@latest && \
     go install github.com/nats-io/nsc/v2@latest && \
     go install github.com/nats-io/nkeys/nk@latest && \
-    go install github.com/nats-io/nats-top@latest
+    go install github.com/nats-io/nats-top@latest && \
+    go install github.com/solidpulse/natsdash@latest
 
 # ---- Stage 2: final debugger image ----
 # match base image version with k8s host node image version for kernel
@@ -94,11 +95,14 @@ RUN apt-get update && \
 #     nsc      - NATS account/user/JWT configuration
 #     nk       - NKey (Ed25519) key generation/signing
 #     nats-top - top-style monitoring view for a NATS server
+#     natsdash - tview-based TUI dashboard for NATS/JetStream
+#                (https://github.com/solidpulse/natsdash)
 COPY --from=go-tools /go/bin/grpcurl  /usr/local/bin/grpcurl
 COPY --from=go-tools /go/bin/nats     /usr/local/bin/nats
 COPY --from=go-tools /go/bin/nsc      /usr/local/bin/nsc
 COPY --from=go-tools /go/bin/nk       /usr/local/bin/nk
 COPY --from=go-tools /go/bin/nats-top /usr/local/bin/nats-top
+COPY --from=go-tools /go/bin/natsdash /usr/local/bin/natsdash
 
 # Keep the container alive by default so it can be `kubectl exec`'d into.
 # Using CMD (not ENTRYPOINT) so it's trivially overridable:
