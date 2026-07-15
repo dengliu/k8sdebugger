@@ -77,6 +77,7 @@ RUN apt-get update && \
     psmisc \
     dsniff \
     mysql-client \
+    postgresql-client \
     tree \
     less \
     unzip \
